@@ -209,20 +209,22 @@
     background: linear-gradient(135deg, #1a001588, #0d000a88);
     border: 1px solid #ff336633;
     border-radius: 16px;
-    padding: 1.2rem 1rem; /* Mehr Platz auf kleinen Screens */
+    padding: 1.2rem 1rem;
     margin: 1rem 0;
     animation: fadeSlide 1s 0.8s both;
     backdrop-filter: blur(4px);
+    overflow: visible; /* Erlaubt dem Inhalt, die Box bei Bedarf zu dehnen */
   }
   .msg-display {
     font-family: 'Playfair Display', serif;
-    font-size: 14px; /* Leicht verkleinert für besseren Lesefluss am Handy */
+    font-size: 14px;
     color: #ffe0e8;
     line-height: 1.8;
     text-align: center;
     white-space: pre-line;
     text-shadow: 0 0 12px #ff003322;
-    word-break: break-word; /* Verhindert unschöne Textumbrüche */
+    word-break: break-word;
+    hyphens: auto; /* Trennt zu lange Wörter automatisch auf Handys */
   }
 
   /* ── Mini hearts row ── */
@@ -396,12 +398,28 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeLightbox()
 const canvas = document.getElementById('fw');
 const ctx = canvas.getContext('2d');
 
+/* ── Fireworks ── */
+const canvas = document.getElementById('fw');
+const ctx = canvas.getContext('2d');
+
 function resize(){
   const w = document.getElementById('cardWrap');
-  if(w){ canvas.width=w.offsetWidth; canvas.height=w.offsetHeight; }
+  if(w){ 
+    // Nutzen scrollHeight statt offsetHeight, um die absolut gesamte Textlänge zu erfassen
+    canvas.width = w.offsetWidth; 
+    canvas.height = w.scrollHeight; 
+  }
 }
+
+// Führe das Resize aus
 resize();
+
+// Warte, bis alles (auch Bilder und Schriften) komplett geladen ist, und passe die Größe nochmals an
+window.addEventListener('load', resize);
 window.addEventListener('resize', resize);
+
+// Sicherheits-Resize nach 500ms, falls Schriften verzögert rendern
+setTimeout(resize, 500);
 
 const COLORS=['#ff3366','#ff6699','#ffaacc','#ffdd44','#ffaa00','#44ddff','#88eeff','#cc44ff','#ff88ff','#44ff99','#ffffff','#ff99bb'];
 
