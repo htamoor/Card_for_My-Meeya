@@ -16,6 +16,7 @@
     justify-content: center;
     min-height: 100vh;
     font-family: 'Playfair Display', Georgia, serif;
+    padding: 10px; /* Verhindert, dass die Karte am Bildschirmrand klebt */
   }
 
   /* ── Floating hearts background ── */
@@ -46,8 +47,8 @@
     border: 1px solid #ff336622;
     border-radius: 24px;
     max-width: 560px;
-    width: 95vw;
-    margin: 1.5rem auto;
+    width: 100%; /* Auf 100% gesetzt für bessere Nutzung des Screens */
+    margin: 1rem auto;
     padding: 0;
     position: relative;
     overflow: hidden;
@@ -87,7 +88,7 @@
   .card {
     position: relative;
     z-index: 3;
-    padding: 2.5rem 2rem 2rem;
+    padding: 2.5rem 1.5rem 2rem; /* Leicht reduziertes Seiten-Padding für Mobile */
   }
 
   /* ── Big heart ── */
@@ -103,7 +104,7 @@
     50%{transform:translateY(-10px)}
   }
   .heart-big {
-    font-size: 80px;
+    font-size: 70px; /* Leicht verkleinert für Mobile */
     display: block;
     text-align: center;
     animation: heartbeat 1.8s ease-in-out infinite, floatY 3.2s ease-in-out infinite;
@@ -117,7 +118,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin: 0.8rem 2rem;
+    margin: 0.8rem 1rem;
   }
   .divider::before, .divider::after {
     content: '';
@@ -134,7 +135,7 @@
   }
   .title-text {
     font-family: 'Dancing Script', cursive;
-    font-size: 30px;
+    font-size: 28px; /* Leicht angepasst */
     font-weight: 700;
     color: #ffb3c6;
     text-align: center;
@@ -148,7 +149,7 @@
   .subtitle-text {
     font-family: 'Playfair Display', serif;
     font-style: italic;
-    font-size: 13px;
+    font-size: 12px;
     color: #cc7799;
     text-align: center;
     margin: 0 0 1rem;
@@ -160,16 +161,17 @@
   /* ── Images ── */
   .images-row {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     justify-content: center;
-    flex-wrap: wrap;
     margin: 1.2rem 0;
     animation: fadeSlide 1s 0.6s both;
   }
   .img-slot {
-    width: 140px;
-    height: 115px;
-    border-radius: 14px;
+    flex: 1; /* Lässt alle Slots gleichmäßig wachsen/schrumpfen */
+    max-width: 150px;
+    aspect-ratio: 4 / 3; /* Behält das perfekte Seitenverhältnis bei */
+    height: auto; /* Deaktiviert feste Höhe */
+    border-radius: 12px;
     border: 1.5px solid #ff336655;
     background: #1a0015;
     display: flex;
@@ -188,7 +190,7 @@
   .img-slot img {
     width: 100%; height: 100%;
     object-fit: cover;
-    border-radius: 12px;
+    border-radius: 10px;
     display: block;
   }
   /* Hover overlay hint */
@@ -196,7 +198,7 @@
     content: '🔍';
     position: absolute;
     bottom: 6px; right: 8px;
-    font-size: 14px;
+    font-size: 12px;
     opacity: 0;
     transition: opacity 0.2s;
   }
@@ -207,19 +209,20 @@
     background: linear-gradient(135deg, #1a001588, #0d000a88);
     border: 1px solid #ff336633;
     border-radius: 16px;
-    padding: 1.2rem 1.4rem;
+    padding: 1.2rem 1rem; /* Mehr Platz auf kleinen Screens */
     margin: 1rem 0;
     animation: fadeSlide 1s 0.8s both;
     backdrop-filter: blur(4px);
   }
   .msg-display {
     font-family: 'Playfair Display', serif;
-    font-size: 15px;
+    font-size: 14px; /* Leicht verkleinert für besseren Lesefluss am Handy */
     color: #ffe0e8;
-    line-height: 2;
+    line-height: 1.8;
     text-align: center;
     white-space: pre-line;
     text-shadow: 0 0 12px #ff003322;
+    word-break: break-word; /* Verhindert unschöne Textumbrüche */
   }
 
   /* ── Mini hearts row ── */
@@ -269,11 +272,12 @@
   .lightbox.active { display: flex; }
   .lightbox img {
     max-width: 90vw;
-    max-height: 80vh;
+    max-height: 75vh;
     border-radius: 16px;
     border: 2px solid #ff336666;
     box-shadow: 0 0 60px #ff003355;
     animation: zoomIn 0.3s ease;
+    object-fit: contain;
   }
   @keyframes zoomIn {
     from { transform: scale(0.7); opacity: 0; }
@@ -293,20 +297,19 @@
   }
   .lightbox-close:hover { background: #33001888; }
 
-  /* ── Decorative stars ── */
-  .star { position: absolute; border-radius: 50%; background: #fff; pointer-events: none; }
-  @keyframes twinkle {
-    0%,100%{opacity:0.1;transform:scale(0.8)}
-    50%{opacity:0.9;transform:scale(1.2)}
+  /* ── Media Queries für sehr kleine Handys ── */
+  @media (max-width: 380px) {
+    .card { padding: 1.5rem 1rem 1.5rem; }
+    .title-text { font-size: 24px; }
+    .msg-display { font-size: 13px; line-height: 1.7; }
+    .heart-big { font-size: 55px; }
   }
 </style>
 </head>
 <body>
 
-<!-- Floating hearts background -->
 <div class="float-hearts" id="floatHearts"></div>
 
-<!-- Lightbox -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <span class="lightbox-close" onclick="closeLightbox()">✕</span>
   <img id="lightbox-img" src="" alt="Bild groß">
