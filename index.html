@@ -10,13 +10,25 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background: #000;
+    background: #0a0008; /* Dunklerer Hintergrund passend zur Karte */
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     font-family: 'Playfair Display', Georgia, serif;
-    padding: 10px; /* Verhindert, dass die Karte am Bildschirmrand klebt */
+    padding: 20px 10px;
+    position: relative;
+  }
+
+  /* ── Canvas JETZT GLOBAL IM HINTERGRUND ── */
+  canvas#fw {
+    position: fixed; 
+    top: 0; 
+    left: 0;
+    width: 100vw; 
+    height: 100vh;
+    pointer-events: none; 
+    z-index: 1; /* Hinter der Karte, vor den Herzen */
   }
 
   /* ── Floating hearts background ── */
@@ -43,20 +55,19 @@
 
   /* ── Card wrapper ── */
   .card-wrap {
-    background: linear-gradient(160deg, #0d0010 0%, #1a0020 40%, #0a0008 100%);
+    background: linear-gradient(160deg, rgba(13,0,16,0.95) 0%, rgba(26,0,32,0.95) 40%, rgba(10,0,8,0.95) 100%);
     border: 1px solid #ff336622;
     border-radius: 24px;
     max-width: 560px;
-    width: 100%; /* Auf 100% gesetzt für bessere Nutzung des Screens */
-    margin: 1rem auto;
+    width: 100%;
+    margin: auto;
     padding: 0;
     position: relative;
-    overflow: hidden;
     box-shadow:
       0 0 60px #ff003322,
       0 0 120px #aa003318,
       inset 0 0 80px #ff002208;
-    z-index: 1;
+    z-index: 2; /* Höher als das Canvas, damit Text lesbar bleibt */
   }
 
   /* Romantic border glow pulse */
@@ -79,16 +90,10 @@
     50% { opacity: 1; }
   }
 
-  canvas#fw {
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none; z-index: 2;
-  }
-
   .card {
     position: relative;
     z-index: 3;
-    padding: 2.5rem 1.5rem 2rem; /* Leicht reduziertes Seiten-Padding für Mobile */
+    padding: 2.5rem 1.5rem 2rem;
   }
 
   /* ── Big heart ── */
@@ -104,7 +109,7 @@
     50%{transform:translateY(-10px)}
   }
   .heart-big {
-    font-size: 70px; /* Leicht verkleinert für Mobile */
+    font-size: 70px;
     display: block;
     text-align: center;
     animation: heartbeat 1.8s ease-in-out infinite, floatY 3.2s ease-in-out infinite;
@@ -129,13 +134,9 @@
   .divider span { color: #ff6699; font-size: 14px; }
 
   /* ── Title ── */
-  @keyframes fadeSlide {
-    from { opacity:0; transform:translateY(18px); }
-    to   { opacity:1; transform:translateY(0); }
-  }
   .title-text {
     font-family: 'Dancing Script', cursive;
-    font-size: 28px; /* Leicht angepasst */
+    font-size: 28px;
     font-weight: 700;
     color: #ffb3c6;
     text-align: center;
@@ -167,10 +168,10 @@
     animation: fadeSlide 1s 0.6s both;
   }
   .img-slot {
-    flex: 1; /* Lässt alle Slots gleichmäßig wachsen/schrumpfen */
+    flex: 1;
     max-width: 150px;
-    aspect-ratio: 4 / 3; /* Behält das perfekte Seitenverhältnis bei */
-    height: auto; /* Deaktiviert feste Höhe */
+    aspect-ratio: 4 / 3;
+    height: auto;
     border-radius: 12px;
     border: 1.5px solid #ff336655;
     background: #1a0015;
@@ -193,7 +194,6 @@
     border-radius: 10px;
     display: block;
   }
-  /* Hover overlay hint */
   .img-slot::after {
     content: '🔍';
     position: absolute;
@@ -206,14 +206,13 @@
 
   /* ── Message box ── */
   .msg-box {
-    background: linear-gradient(135deg, #1a001588, #0d000a88);
+    background: linear-gradient(135deg, rgba(26,0,21,0.6), rgba(13,0,10,0.6));
     border: 1px solid #ff336633;
     border-radius: 16px;
     padding: 1.2rem 1rem;
     margin: 1rem 0;
     animation: fadeSlide 1s 0.8s both;
     backdrop-filter: blur(4px);
-    overflow: visible; /* Erlaubt dem Inhalt, die Box bei Bedarf zu dehnen */
   }
   .msg-display {
     font-family: 'Playfair Display', serif;
@@ -224,7 +223,6 @@
     white-space: pre-line;
     text-shadow: 0 0 12px #ff003322;
     word-break: break-word;
-    hyphens: auto; /* Trennt zu lange Wörter automatisch auf Handys */
   }
 
   /* ── Mini hearts row ── */
@@ -299,7 +297,6 @@
   }
   .lightbox-close:hover { background: #33001888; }
 
-  /* ── Media Queries für sehr kleine Handys ── */
   @media (max-width: 380px) {
     .card { padding: 1.5rem 1rem 1.5rem; }
     .title-text { font-size: 24px; }
@@ -310,6 +307,8 @@
 </head>
 <body>
 
+<canvas id="fw"></canvas>
+
 <div class="float-hearts" id="floatHearts"></div>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -318,8 +317,6 @@
 </div>
 
 <div class="card-wrap" id="cardWrap">
-  <canvas id="fw"></canvas>
-
   <div class="card">
     <span class="heart-big">❤️</span>
 
@@ -394,32 +391,16 @@ function closeLightbox(){
 }
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeLightbox(); });
 
-/* ── Fireworks ── */
-const canvas = document.getElementById('fw');
-const ctx = canvas.getContext('2d');
-
-/* ── Fireworks ── */
+/* ── Fireworks (Optimiert auf Screen-Größe) ── */
 const canvas = document.getElementById('fw');
 const ctx = canvas.getContext('2d');
 
 function resize(){
-  const w = document.getElementById('cardWrap');
-  if(w){ 
-    // Nutzen scrollHeight statt offsetHeight, um die absolut gesamte Textlänge zu erfassen
-    canvas.width = w.offsetWidth; 
-    canvas.height = w.scrollHeight; 
-  }
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
-
-// Führe das Resize aus
 resize();
-
-// Warte, bis alles (auch Bilder und Schriften) komplett geladen ist, und passe die Größe nochmals an
-window.addEventListener('load', resize);
 window.addEventListener('resize', resize);
-
-// Sicherheits-Resize nach 500ms, falls Schriften verzögert rendern
-setTimeout(resize, 500);
 
 const COLORS=['#ff3366','#ff6699','#ffaacc','#ffdd44','#ffaa00','#44ddff','#88eeff','#cc44ff','#ff88ff','#44ff99','#ffffff','#ff99bb'];
 
@@ -487,7 +468,6 @@ class Rocket{
     const arr=[];
     const count=90+Math.floor(Math.random()*70);
     for(let i=0;i<count;i++) arr.push(new Particle(this.x,this.y,this.color));
-    /* Heart-shaped burst ~35% of explosions */
     if(Math.random()<0.35){
       const hColor=['#ff3366','#ff6699','#ffaacc'][Math.floor(Math.random()*3)];
       for(let i=0;i<50;i++){
@@ -508,7 +488,8 @@ let rockets=[],particles=[],lastRocket=0;
 function launchRocket(){ rockets.push(new Rocket()); }
 
 function loop(){
-  ctx.fillStyle='rgba(10,0,8,0.15)';
+  // Ein Hauch von Transparenz sorgt dafür, dass das Feuerwerk am Bildschirmrand verblasst
+  ctx.fillStyle='rgba(10,0,8,0.2)';
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
   const now=Date.now();
